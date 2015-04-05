@@ -98,7 +98,7 @@ public:
         for(BoardType::size_type i = 0; i < board.size(); ++i)
         {
             for(LineType::size_type j = 0; j < board[i].size(); ++j)
-                std::cout << board[i][j] << "   ";
+                std::cout << board[i][j] << "\t";
             std::cout << std::endl;
         }
     }
@@ -167,7 +167,7 @@ private:
 
 int main()
 {
-    Board board(6, 6);
+    Board board(5, 5);
     HorseMove firstHorseMove(0, 0);
     Knight knight(firstHorseMove, board);
 
