@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 #include <vector>
 
 /**
@@ -45,20 +46,20 @@ public:
             HorseMove horseMove(x+MovePoints[i][0], y+MovePoints[i][1]);
 
             if((int)x+MovePoints[i][0] > -1 && (int)y+MovePoints[i][1] > -1)
-                options.push_back(horseMove);
+                options.push(horseMove);
         }
     }
 
     HorseMove getNextOption() {
-        HorseMove horseNove = options.back();
-        options.pop_back();
+        HorseMove horseNove = options.top();
+        options.pop();
         return horseNove;
     }
 
     bool isMoreOptions() { return options.size() != 0; }
 
     bool initialized;
-    std::vector<HorseMove> options;
+    std::stack<HorseMove> options;
 };
 
 class Board{
@@ -125,33 +126,32 @@ class Knight{
 public:
     Knight(HorseMove &firstNove, Board &board) : board(board) { firstNove.init(); moveTo(firstNove); }
 
-    void cancelLastMove() { board.cancelHorseMove(lastMoves.back()); lastMoves.pop_back(); }
+    void cancelLastMove() { board.cancelHorseMove(lastMoves.top()); lastMoves.pop(); }
     void moveTo(const HorseMove &horseMove) {
         if(!board.isHorseTryValid(horseMove)) {
             return;
         }
 
-        lastMoves.push_back(horseMove);
+        lastMoves.push(horseMove);
         board.registorHorseMove(horseMove, lastMoves.size());
     }
 
     void moveToNextPoint() {
-        if(lastMoves.size() == 0)
-        {
+        if(lastMoves.size() == 0) {
             std::cout << "It's bad but there's no more options, fix your program!" << std::endl;
             return;
         }
 
-        if(!lastMoves.back().initialized) {
-            lastMoves.back().init();
+        if(!lastMoves.top().initialized) {
+            lastMoves.top().init();
         }
 
-        if(!lastMoves.back().isMoreOptions()) {
+        if(!lastMoves.top().isMoreOptions()) {
             cancelLastMove();
             return moveToNextPoint();
         }
 
-        HorseMove horseMove = lastMoves.back().getNextOption();
+        HorseMove horseMove = lastMoves.top().getNextOption();
 
         if(!board.isHorseTryValid(horseMove))
             return moveToNextPoint(); // The wrong move already poped. (in getNextOption() function)
@@ -160,7 +160,7 @@ public:
     }
 
 private:
-    std::vector<HorseMove> lastMoves;
+    std::stack<HorseMove> lastMoves;
 
     Board &board;
 };
